@@ -14,16 +14,16 @@ const PORT = process.env.PORT || 8080;
 
 // Sets up the Express app to handle data parsing
 // body-parser built into express v 4.16+ allows replacing ln 17 with ln 18 
-// app.use(express.urlencoded({ extended: true }));
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
+//app.use(express.urlencoded());
 app.use(express.json());
 
 // ROUTER
 // The below points our server to a series of "route" files.
 // These routes give our server a "map" of how to respond when users visit or request data from various URLs.
 
-require('./routes/apiRoutes')(app);
-require('./routes/htmlRoutes')(app);
+// require('./routes/apiRoutes')(app);
+// require('./routes/htmlRoutes')(app);
 
 // LISTENER
 // The below code effectively "starts" our server
@@ -35,4 +35,7 @@ app.listen(PORT, () => {
 app.get('/', function (req, res) {
     res.send('Hello World')
     })
-app.listen(8080)
+app.listen(3000)
+
+
+ 
