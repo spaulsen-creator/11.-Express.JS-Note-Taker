@@ -1,41 +1,80 @@
-// DEPENDENCIES
-// Series of npm packages that we will use to give our server useful functionality
+// const express = require('express');
 
-const express = require('express');
+// const app = express();
 
-// EXPRESS CONFIGURATION
-// This sets up the basic properties for our express server
+// // Sets an initial port. We will use this later in our listener
+// const PORT = process.env.PORT || 8080;
 
-// Tells node that we are creating an "express" server
-const app = express();
+// // Sets up the Express app to handle data parsing
 
-// Sets an initial port. We will use this later in our listener
-const PORT = process.env.PORT || 8080;
+// app.use(express.urlencoded({ extended: true }));
 
-// Sets up the Express app to handle data parsing
-// body-parser built into express v 4.16+ allows replacing ln 17 with ln 18 
-app.use(express.urlencoded({ extended: true }));
-//app.use(express.urlencoded());
-app.use(express.json());
+// app.use(express.json());
+// //app.use(express.static(path.join(__dirname, 'public')));
 
-// ROUTER
-// The below points our server to a series of "route" files.
-// These routes give our server a "map" of how to respond when users visit or request data from various URLs.
+// // ROUTER
+// // The below points our server to a series of "route" files.
+// // These routes give our server a "map" of how to respond when users visit or request data from various URLs.
 
 // require('./routes/apiRoutes')(app);
 // require('./routes/htmlRoutes')(app);
 
-// LISTENER
-// The below code effectively "starts" our server
+// // LISTENER
+// // The below code effectively "starts" our server
 
-app.listen(PORT, () => {
-    console.log(`App listening on PORT: ${PORT}`);
+// app.listen(PORT, () => {
+//     console.log(`App listening on PORT: http://localhost:${PORT}`);
+// });
+
+// // app.get('/', function (req, res) {
+// //     res.send('Hello World')
+// //     })
+// // app.listen(3000)
+
+
+const express = require('express');
+const apiRoutes = require('./routes/apiRoutes');
+const htmlRoutes = require('./routes/htmlRoutes');
+const fs = require('fs');
+let db = require('./db/db.json');
+
+const app = express();
+const PORT = 3000;
+
+// Sets up the Express app to handle data parsing
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.static("public"));
+
+// // connect to both route files using app.use
+// app.use('/api', apiRoutes);
+// app.use('/', htmlRoutes);
+
+const path = require('path');
+
+// Sets up the Express app to handle data parsing
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+//Routes
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, '/index.html')));
+app.get('/notes', (req, res) => res.sendFile(path.join(__dirname, './public/notes.html')));
+
+  // api Routes
+app.get('/api/notes', (req, res) => res.sendFile(path.join(__dirname, './db/db.json')));
+
+app.get('*', (req, res) => res.sendFile(path.join(__dirname, './public/index.html')));
+
+app.post('/api/notes', (req, res) => {
+  // const file = req.body;
+  // console.log(file);
+
+  db.push(req.body);
+  // console.log(db);
+  // const data = JSON.stringify(db);
+  fs.writeFileSync('./db/db.json', JSON.stringify(db), (err) =>  err ? console.error(err) : console.log('Success!'))
 });
 
-app.get('/', function (req, res) {
-    res.send('Hello World')
-    })
-app.listen(3000)
+// Listener
+app.listen(PORT, () => console.log(`Server listening on: http://localhost:${PORT}`));
 
-
- 
